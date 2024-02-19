@@ -1,7 +1,5 @@
 FROM postgres:16.2
 
-COPY ./app /app
-
 # Install dependencies for pgvector
 RUN apt-get update && apt-get install --reinstall ca-certificates && apt-get install -y --no-install-recommends \
     build-essential \
