@@ -18,7 +18,7 @@ RUN git clone https://github.com/pgvector/pgvector.git \
     && make install
 
 # Python requirements
-RUN pip install --break-system-packages -r /app/requirements.txt && python3 /app/main.py
+RUN pip install --break-system-packages -r /app/requirements.txt && python3 /app/db.py
 
 # Clean up
 RUN apt-get purge -y --auto-remove build-essential git postgresql-server-dev-16 && rm -rf pgvector
