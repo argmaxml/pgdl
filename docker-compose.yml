@@ -3,8 +3,8 @@ version: '3.9'
 services:
   nb:
     build:
-      context: .
-      dockerfile: nb/Dockerfile
+      context: nb
+      dockerfile: Dockerfile
     ports:
       - "8888:8888"
     networks:
@@ -14,8 +14,8 @@ services:
 
   pg:
     build:
-      context: .
-      dockerfile: nb/Dockerfile
+      context: pg
+      dockerfile: Dockerfile
     ports:
       - "5432:5432"
     restart: always
