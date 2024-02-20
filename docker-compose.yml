@@ -10,6 +10,17 @@ services:
     networks:
       - argmax
     depends_on:
+      - emb
+
+  emb:
+    build:
+      context: emb
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - argmax
+    depends_on:
       - pg
 
   pg:
