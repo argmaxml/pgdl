@@ -19,6 +19,8 @@ from db_model import get_db, App
 import sentence_transformers
 # from PIL import Image
 # from transformers import CLIPProcessor, CLIPModel
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 
 class IgnoreHealthCheck(logging.Filter):
@@ -32,6 +34,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 app = FastAPI()
+scheduler = AsyncIOScheduler()
 
 app.add_middleware(
     CORSMiddleware,
@@ -62,6 +65,23 @@ async def app_list(db: Session = Depends(get_db)) -> dict:
     return {
     "   data": [app.title for app in apps]
     }
+
+def my_periodic_task():
+    print("Performing a periodic task every 5 minutes.")
+
+@app.on_event("startup")
+def start_scheduler():
+    scheduler.add_job(
+        my_periodic_task,
+        trigger=IntervalTrigger(minutes=5),
+        id="my_periodic_task",  # ID for this job
+        replace_existing=True,
+    )
+    scheduler.start()
+
+@app.on_event("shutdown")
+def shutdown_scheduler():
+    scheduler.shutdown()
 
 if __name__ == "__main__":
     import uvicorn
