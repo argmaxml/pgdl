@@ -13,8 +13,12 @@ from uuid import uuid4
 from typing import Optional, List, Dict
 import pandas as pd
 import json, random, logging
+import requests
 from time import time
 from db_model import get_db, App
+import sentence_transformers
+# from PIL import Image
+# from transformers import CLIPProcessor, CLIPModel
 
 
 class IgnoreHealthCheck(logging.Filter):
@@ -36,6 +40,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+text_model = sentence_transformers.SentenceTransformer('BAAI/bge-base-en-v1.5')
 
 # route handlers
 @app.get("/healthz", tags=["root"])
@@ -44,13 +49,18 @@ async def healthz() -> dict:
         "healthz": "👍"
     }
 
+@app.get("/embed/text", tags=["embed"])
+async def embed_text(text: str) -> List[float]:
+    lst = text_model.encode([text]).tolist()[0]
+    lst =  [round(x, 6) for x in lst]
+    return lst
+
 
 @app.get("/app/list", tags=["apps"])
 async def app_list(db: Session = Depends(get_db)) -> dict:
     apps = db.query(App).all()
-
     return {
-        "data": [app.title for app in apps]
+    "   data": [app.title for app in apps]
     }
 
 if __name__ == "__main__":

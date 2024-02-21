@@ -12,10 +12,12 @@ from typing import Dict, List, Optional
 __dir__ = Path(__file__).parent.parent.absolute()
 
 # SQLAlchemy configuration
+LOCAL_DB = False
 try:
     engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres')
 except ModuleNotFoundError:
     engine = create_engine('sqlite:///test.db')
+    LOCAL_DB = True
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -38,13 +40,14 @@ class App(Base):
         return ' '.join(self.description.split()[:max_words])
 
 
-class AppVector(Base):
-    __tablename__ = 'app_vectors'
-    id = Column(Integer, primary_key=True)
-    bundle_id = Column(String, ForeignKey("apps.bundle_id"))
-    content = Column(String)
-    embedding = Column(Vector(384))
-    clip_embedding = Column(Vector(384)) # ViT-B-16-SigLIP-384
+if not LOCAL_DB:
+    class AppVector(Base):
+        __tablename__ = 'app_vectors'
+        id = Column(Integer, primary_key=True)
+        bundle_id = Column(String, ForeignKey("apps.bundle_id"))
+        content = Column(String)
+        embedding = Column(Vector(384))
+        clip_embedding = Column(Vector(384)) # ViT-B-16-SigLIP-384
 
 
 
@@ -60,6 +63,8 @@ def get_db():
 
 
 def load_pg_extensions():
+    if LOCAL_DB:
+        return
     with engine.connect() as conn:
         conn.execute(text('CREATE EXTENSION IF NOT EXISTS vector;'))
         conn.execute(text('CREATE EXTENSION IF NOT EXISTS http;'))
