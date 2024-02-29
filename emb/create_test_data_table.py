@@ -12,7 +12,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Read the CSV file and insert records into the database
-with open('data/test_data.csv', 'r') as file:
+with open('test_data.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in reader:
         # Create a record of "Auction" object

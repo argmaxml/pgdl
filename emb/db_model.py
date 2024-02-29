@@ -51,32 +51,32 @@ class Auction(Base):
     # Hint: For each app, you need to know under which user it is holded, as well as what is its category
     # Hint#2: Make sure to work on data from the specified geos
 
-class App(Base):
-    # App model
-
-    __tablename__ = "apps"
-    id = Column(Integer, primary_key=True, index=True)
-    bundle_id = Column(String)
-    ios = Column(Boolean, default=False)
-    title = Column(String)
-    description = Column(String)
-    store_url = Column(String)
-    icon = Column(String)
-    category_names = Column(String)
-    ts = Column(TIMESTAMP, default=datetime.now(timezone.utc))
-
-    def truncate_description(self, max_words=150):
-        return ' '.join(self.description.split()[:max_words])
-
-
-if not LOCAL_DB:
-    class AppVector(Base):
-        __tablename__ = 'app_vectors'
-        id = Column(Integer, primary_key=True)
-        bundle_id = Column(String, ForeignKey("apps.bundle_id"))
-        content = Column(String)
-        embedding = Column(Vector(384))
-        clip_embedding = Column(Vector(384)) # ViT-B-16-SigLIP-384
+# class App(Base):
+#     # App model
+#
+#     __tablename__ = "apps"
+#     id = Column(Integer, primary_key=True, index=True)
+#     bundle_id = Column(String)
+#     ios = Column(Boolean, default=False)
+#     title = Column(String)
+#     description = Column(String)
+#     store_url = Column(String)
+#     icon = Column(String)
+#     category_names = Column(String)
+#     ts = Column(TIMESTAMP, default=datetime.now(timezone.utc))
+#
+#     def truncate_description(self, max_words=150):
+#         return ' '.join(self.description.split()[:max_words])
+#
+#
+# if not LOCAL_DB:
+#     class AppVector(Base):
+#         __tablename__ = 'app_vectors'
+#         id = Column(Integer, primary_key=True)
+#         bundle_id = Column(String, ForeignKey("apps.bundle_id"))
+#         content = Column(String)
+#         embedding = Column(Vector(384))
+#         clip_embedding = Column(Vector(384)) # ViT-B-16-SigLIP-384
 
 
 
