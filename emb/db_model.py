@@ -10,11 +10,12 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 __dir__ = Path(__file__).parent.parent.absolute()
+engine = None
 
 # SQLAlchemy configuration
 LOCAL_DB = False
 try:
-    engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres')
+    engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres', echo=True)
     print("Engine created with argmax creds")
 except ModuleNotFoundError:
     engine = create_engine('sqlite:///test.db')
@@ -102,6 +103,18 @@ def load_pg_extensions():
         # conn.commit()
     return
 
+def wait_for_postgres():
+    max_retries = 10
+    retries = 0
+    while retries < max_retries:
+        try:
+            engine.execute("SELECT 1")
+            return
+        except Exception as e:
+            retries += 1
+            print(f"Failed to connect to PostgreSQL. Retrying... ({retries}/{max_retries})")
+            time.sleep(3)  # Wait for 3 seconds before retrying
+    raise Exception("Failed to connect to PostgreSQL after multiple attempts.")
 
 if __name__ == "__main__":
     import logging
@@ -117,6 +130,7 @@ if __name__ == "__main__":
         Path(__dir__ / "test.db").unlink()
     # create database tables
     Base.metadata.create_all(bind=engine)
+    wait_for_postgres()
     # load extensions
     load_pg_extensions()
     # logger.info("loading Pandas DF of our test_data...")

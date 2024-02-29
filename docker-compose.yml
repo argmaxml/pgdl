@@ -10,7 +10,7 @@ services:
     networks:
       - argmax
     depends_on:
-      - pg
+      - emb
 
   emb:
     build:
@@ -21,7 +21,7 @@ services:
     networks:
       - argmax
     depends_on:
-      - nb
+      - pg
 
   pg:
     build:

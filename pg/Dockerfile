@@ -22,5 +22,3 @@ RUN git clone https://github.com/pramsey/pgsql-http.git \
 # Clean up
 #RUN apt-get purge -y --auto-remove build-essential git postgresql-server-dev-16 \
 #    && rm -rf pgvector pgsql-http
-
-CMD ["ping pg"]
