@@ -7,6 +7,7 @@ from db_model import Auction, Base, engine
 # Bind the engine with Base
 Base.metadata.bind = engine
 
+
 # Create a session
 Session = sessionmaker(bind=engine)
 session = Session()

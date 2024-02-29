@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, Integer, Double, String, Boolean, TIMESTAMP, ForeignKey, text
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
 from pgvector.sqlalchemy import Vector
@@ -15,9 +15,11 @@ __dir__ = Path(__file__).parent.parent.absolute()
 LOCAL_DB = False
 try:
     engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres')
+    print("Engine created with argmax creds")
 except ModuleNotFoundError:
     engine = create_engine('sqlite:///test.db')
     LOCAL_DB = True
+    print("Engine created locally")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
