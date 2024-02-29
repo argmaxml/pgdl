@@ -15,14 +15,12 @@ session = Session()
 with open('data/test_data.csv', 'r') as file:
     reader = csv.DictReader(file)
     for row in reader:
-        # Create an instance of Auction
+        # Create a record of "Auction" object
         auction = Auction(**row)
 
         # Add the instance to the session
         session.add(auction)
 
-# Commit the session to save changes
+# Commit and close session
 session.commit()
-
-# Close the session
 session.close()
