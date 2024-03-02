@@ -17,12 +17,11 @@ engine = None
 LOCAL_DB = False
 try:
     engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres', echo=True)
-    print("Engine created with argmax creds")
 except ModuleNotFoundError:
     engine = create_engine('sqlite:///test.db')
     LOCAL_DB = True
-    print("Engine created locally")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = SessionLocal()
 Base = declarative_base()
 
 class Auction(Base):
@@ -104,6 +103,19 @@ def load_pg_extensions():
         # conn.commit()
     return
 
+def generate_data_in_auctions(data_file_path):
+    # Read the CSV file and insert records into the database
+    with open(data_file_path, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Create a record of "Auction" object
+            auction = Auction(**row)
+            # Add the instance to the session
+            session.add(auction)
+
+    # Commit and close SessionLocal
+    session.commit()
+    session.close()
 
 if __name__ == "__main__":
     import logging
@@ -121,18 +133,8 @@ if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
     # load extensions
     load_pg_extensions()
-    # Read the CSV file and insert records into the database
-    with open('test_data.csv', 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            # Create a record of "Auction" object
-            auction = Auction(**row)
 
-            # Add the instance to the session
-            SessionLocal.add(auction)
-
-    # Commit and close SessionLocal
-    SessionLocal.commit()
-    SessionLocal.close()
-
+    data_file_path = 'test_data.csv'
+    logger.info(f"Going to load data from {data_file_path}")
+    generate_data_in_auctions(data_file_path)
     logger.info("Done")

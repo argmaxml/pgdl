@@ -15,7 +15,7 @@ import pandas as pd
 import json, random, logging
 import requests
 from time import time
-from db_model import get_db, App
+from db_model import get_db
 import sentence_transformers
 # from PIL import Image
 # from transformers import CLIPProcessor, CLIPModel
@@ -59,12 +59,12 @@ async def embed_text(text: str) -> List[float]:
     return lst
 
 
-@app.get("/app/list", tags=["apps"])
-async def app_list(db: Session = Depends(get_db)) -> dict:
-    apps = db.query(App).all()
-    return {
-    "   data": [app.title for app in apps]
-    }
+# @app.get("/app/list", tags=["apps"])
+# async def app_list(db: Session = Depends(get_db)) -> dict:
+#     apps = db.query(App).all()
+#     return {
+#     "   data": [app.title for app in apps]
+#     }
 
 def my_periodic_task():
     print("Performing a periodic task every 5 minutes.")
