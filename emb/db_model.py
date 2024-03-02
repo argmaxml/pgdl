@@ -37,23 +37,6 @@ class Auction(Base):
     bidFloorPrice = Column(Double)
     sentPrice = Column(Double)
 
-    # Warm up Q1:
-    # How many apps were seen and are running in country = 'US'?
-
-    # Q2: What is the distribution (min, max, Q1, Q3, mean, median) of apps that a given deviceId has
-    # Hint: requires groupby, as well as calculating metrics
-
-    # Q3: (need to get for each app its description / category)
-    # What is the 2nd most common app category (uses distinct) for users running in:
-    # 3a. US
-    # 3b. BR
-    # 3c. IN
-    # Where most common is counted by the amount of the devices each app category holds
-    # An example: For US, if "news" apps has 1M devices, and "sports" apps has 0.5M devices (and no other categories for simplicity)
-    # then "sports" is the 2nd most common app category in US.
-    # Hint: For each app, you need to know under which user it is holded, as well as what is its category
-    # Hint#2: Make sure to work on data from the specified geos
-
 # class App(Base):
 #     # App model
 #
