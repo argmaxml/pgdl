@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from pgvector.sqlalchemy import Vector
 from decouple import config
 from pathlib import Path
+import csv
 from typing import Dict, List, Optional
 
 __dir__ = Path(__file__).parent.parent.absolute()
@@ -120,9 +121,18 @@ if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
     # load extensions
     load_pg_extensions()
-    # logger.info("loading Pandas DF of our test_data...")
-    # df = pd.read_csv("data/test_data.csv")
-    # logger.info("loaded data into Pandas DF")
-    # df.to_sql("auctions", engine, if_exists='replace', index=False)
-    # logger.info("created table auctions")
+    # Read the CSV file and insert records into the database
+    with open('test_data.csv', 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Create a record of "Auction" object
+            auction = Auction(**row)
+
+            # Add the instance to the session
+            SessionLocal.add(auction)
+
+    # Commit and close SessionLocal
+    SessionLocal.commit()
+    SessionLocal.close()
+
     logger.info("Done")
