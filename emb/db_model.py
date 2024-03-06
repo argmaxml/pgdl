@@ -117,7 +117,7 @@ if __name__ == "__main__":
     # load extensions
     load_pg_extensions()
 
-    data_file_path = 'test_data.csv'
+    data_file_path = 'auctions_data.csv'
     logger.info(f"Going to load data from {data_file_path}")
     generate_data_in_auctions(data_file_path)
     logger.info("Done")

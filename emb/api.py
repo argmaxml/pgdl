@@ -66,15 +66,15 @@ async def embed_text(text: str) -> List[float]:
 #     "   data": [app.title for app in apps]
 #     }
 
-def my_periodic_task():
+def embed_periodically():
     print("Performing a periodic task every 5 minutes.")
 
 @app.on_event("startup")
 def start_scheduler():
     scheduler.add_job(
-        my_periodic_task,
-        trigger=IntervalTrigger(minutes=5),
-        id="my_periodic_task",  # ID for this job
+        embed_periodically,
+        trigger=IntervalTrigger(minutes=int(config("EMBED_FREQUENCY", default=5))),
+        id="embed_periodically", 
         replace_existing=True,
     )
     scheduler.start()
