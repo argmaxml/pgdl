@@ -41,7 +41,7 @@ if not LOCAL_DB:
     class AppVector(Base):
         __tablename__ = 'app_vectors'
         id = Column(Integer, primary_key=True, autoincrement=True)
-        bundleId = Column(String, ForeignKey("apps.bundle_id"))
+        bundleId = Column(String)
         content = Column(String)
         embedding = Column(Vector(384), default=None)
 
