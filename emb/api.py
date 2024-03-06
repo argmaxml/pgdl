@@ -11,11 +11,10 @@ from datetime import datetime, timedelta, timezone
 from decouple import config
 from uuid import uuid4
 from typing import Optional, List, Dict
-import pandas as pd
 import json, random, logging
 import requests
 from time import time
-from db_model import get_db
+from db_model import get_db, AppVector
 import sentence_transformers
 # from PIL import Image
 # from transformers import CLIPProcessor, CLIPModel
@@ -43,7 +42,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-text_model = sentence_transformers.SentenceTransformer('BAAI/bge-base-en-v1.5')
+text_model = sentence_transformers.SentenceTransformer('BAAI/bge-small-en-v1.5')
 
 # route handlers
 @app.get("/healthz", tags=["root"])
@@ -52,7 +51,7 @@ async def healthz() -> dict:
         "healthz": "👍"
     }
 
-@app.get("/embed/text", tags=["embed"])
+@app.get("/embed", tags=["embed"])
 async def embed_text(text: str) -> List[float]:
     lst = text_model.encode([text]).tolist()[0]
     lst =  [round(x, 6) for x in lst]
@@ -67,13 +66,24 @@ async def embed_text(text: str) -> List[float]:
 #     }
 
 def embed_periodically():
-    print("Performing a periodic task every 5 minutes.")
+    db = get_db()
+    # query app vectors where embedding is null, limit to  16
+    app_vectors = db.query(AppVector).filter(AppVector.embedding == None).limit(int(config("BATCH_SIZE", 16))).all()
+    if not app_vectors:
+        logger.info("No app vectors to embed.")
+        return
+    # embed the content of the app vectors
+    for app_vector in app_vectors:
+        # TODO: run as batch
+        app_vector.embedding = text_model.encode([app_vector.content]).tolist()[0]
+    db.commit()
+    db.close()
 
 @app.on_event("startup")
 def start_scheduler():
     scheduler.add_job(
         embed_periodically,
-        trigger=IntervalTrigger(minutes=int(config("EMBED_FREQUENCY", default=5))),
+        trigger=IntervalTrigger(minutes=int(config("EMBED_FREQUENCY", default=1))),
         id="embed_periodically", 
         replace_existing=True,
     )

@@ -83,7 +83,6 @@ def generate_data_in_auctions(data_file_path):
 
 if __name__ == "__main__":
     import logging
-    import pandas as pd
 
     logger = logging.Logger("DBFeeder")
     # make logger print to stdout
