@@ -37,32 +37,13 @@ class Auction(Base):
     bidFloorPrice = Column(Double)
     sentPrice = Column(Double)
 
-# class App(Base):
-#     # App model
-#
-#     __tablename__ = "apps"
-#     id = Column(Integer, primary_key=True, index=True)
-#     bundle_id = Column(String)
-#     ios = Column(Boolean, default=False)
-#     title = Column(String)
-#     description = Column(String)
-#     store_url = Column(String)
-#     icon = Column(String)
-#     category_names = Column(String)
-#     ts = Column(TIMESTAMP, default=datetime.now(timezone.utc))
-#
-#     def truncate_description(self, max_words=150):
-#         return ' '.join(self.description.split()[:max_words])
-#
-#
-# if not LOCAL_DB:
-#     class AppVector(Base):
-#         __tablename__ = 'app_vectors'
-#         id = Column(Integer, primary_key=True)
-#         bundle_id = Column(String, ForeignKey("apps.bundle_id"))
-#         content = Column(String)
-#         embedding = Column(Vector(384))
-#         clip_embedding = Column(Vector(384)) # ViT-B-16-SigLIP-384
+if not LOCAL_DB:
+    class AppVector(Base):
+        __tablename__ = 'app_vectors'
+        id = Column(Integer, primary_key=True, autoincrement=True)
+        bundleId = Column(String, ForeignKey("apps.bundle_id"))
+        content = Column(String)
+        embedding = Column(Vector(384), default=None)
 
 
 
@@ -116,7 +97,10 @@ if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
     # load extensions
     load_pg_extensions()
-
+    if LOCAL_DB:
+        logger.info("Local database detected, skipping vector extension creation")
+        # TODO: populate app_vectors table
+    # load auctions into the database
     data_file_path = 'auctions_data.csv'
     logger.info(f"Going to load data from {data_file_path}")
     generate_data_in_auctions(data_file_path)
