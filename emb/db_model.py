@@ -92,13 +92,10 @@ if __name__ == "__main__":
     if (Path(__dir__ / "test.db").exists()):
         logger.info("Found existing SQlite db, removing it")
         Path(__dir__ / "test.db").unlink()
-    # create database tables
-    Base.metadata.create_all(bind=engine)
     # load extensions
     load_pg_extensions()
-    if LOCAL_DB:
-        logger.info("Local database detected, skipping vector extension creation")
-        # TODO: populate app_vectors table
+    # create database tables
+    Base.metadata.create_all(bind=engine)
     # load auctions into the database
     data_file_path = 'auctions_data.csv'
     logger.info(f"Going to load data from {data_file_path}")
