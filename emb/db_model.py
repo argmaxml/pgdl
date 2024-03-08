@@ -23,7 +23,8 @@ Base = declarative_base()
 class Auction(Base):
     # Represents an auction in the RTB space
     __tablename__ = "auctions"
-    eventTimestamp = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    eventTimestamp = Column(String)
     unitDisplayType = Column(String)
     brandName = Column(String)
     bundleId = Column(String)
@@ -63,19 +64,20 @@ def load_pg_extensions():
     return
 
 def load_data():
+    with open('app_data.csv', 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            vec = AppVector(bundleId=row['bundleId'], content=row['content'], embedding=None)
+            session.add(vec)
+    session.commit()
+
+
     with open('auctions_data.csv', 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             auction = Auction(**row)
             session.add(auction)
 
-    session.commit()
-
-    with open('app_data.csv', 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            vec = AppVector(**row)
-            session.add(vec)
     session.commit()
     session.close()
 
