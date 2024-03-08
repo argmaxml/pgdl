@@ -1,6 +1,5 @@
 # PGDL task
 ### Submission deadline: March 30th, 2024
-Please fill in [this form](https://forms.gle/MaMtcL7yuKsbtgdk7) after completing the task.
 ![Argmax](https://raw.githubusercontent.com/argmaxml/image-search/master/assets/argmax.png)
 
 ## Who is this repo for ?
