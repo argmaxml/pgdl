@@ -1,9 +1,12 @@
 # PGDL task
 ### Submission deadline: March 30th, 2024
+![Argmax](https://raw.githubusercontent.com/argmaxml/image-search/master/assets/argmax.png)
 
 ## Who is this repo for ?
 [Argmax](https://www.argmaxml.com) is hiring Junior Data scientists.
 This repo is meant to be a the first step in the process and it will set the stage for the interview.
+
+The data is taken from a real-life scenario, and it reflects the type of work you will do at Argmax.
 
 
 ## About the position
