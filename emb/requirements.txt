@@ -4,8 +4,8 @@ SQLAlchemy==2.0.27
 psycopg2-binary==2.9.9
 python-decouple==3.8
 numpy==1.26.4
-sentence-transformers==2.2.2
-transformers==4.35.2
+sentence-transformers==2.5.1
+transformers==4.38.2
 fastapi==0.109.2
 uvicorn==0.27.1
 apscheduler==3.10.4
