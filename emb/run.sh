@@ -9,4 +9,5 @@ command2="uvicorn api:app --host 0.0.0.0 --port 8080"
 # Run the commands
 sleep 5
 $command1
+sleep 2
 $command2

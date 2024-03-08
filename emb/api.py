@@ -14,10 +14,8 @@ from typing import Optional, List, Dict
 import json, random, logging
 import requests
 from time import time
-from db_model import get_db, AppVector
+from db_model import get_db, AppVector, SessionLocal
 import sentence_transformers
-# from PIL import Image
-# from transformers import CLIPProcessor, CLIPModel
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
@@ -42,7 +40,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-text_model = sentence_transformers.SentenceTransformer('BAAI/bge-small-en-v1.5')
+text_model = sentence_transformers.SentenceTransformer(config("MODEL_NAME", "BAAI/bge-small-en-v1.5"))
 
 # route handlers
 @app.get("/healthz", tags=["root"])
@@ -66,7 +64,7 @@ async def embed_text(text: str) -> List[float]:
 #     }
 
 def embed_periodically():
-    db = get_db()
+    db = SessionLocal()
     # query app vectors where embedding is null, limit to  16
     app_vectors = db.query(AppVector).filter(AppVector.embedding == None).limit(int(config("BATCH_SIZE", 16))).all()
     if not app_vectors:
@@ -77,6 +75,7 @@ def embed_periodically():
         # TODO: run as batch
         app_vector.embedding = text_model.encode([app_vector.content]).tolist()[0]
     db.commit()
+    db.flush()
     db.close()
 
 @app.on_event("startup")

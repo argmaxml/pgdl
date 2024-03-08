@@ -16,6 +16,11 @@ services:
     build:
       context: emb
       dockerfile: Dockerfile
+    environment:
+      MODEL_NAME: BAAI/bge-small-en-v1.5
+      MODEL_DIM: 384
+      DB_URL: postgresql://postgres:argmax@pg:5432/postgres
+      EMBED_FREQUENCY: 1
     ports:
       - "8080:8080"
     networks:

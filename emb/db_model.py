@@ -16,7 +16,8 @@ engine = None
 # SQLAlchemy configuration
 LOCAL_DB = False
 try:
-    engine = create_engine('postgresql://postgres:argmax@pg:5432/postgres', echo=True)
+    DB_URL = config("DB_URL", 'postgresql://postgres:argmax@pg:5432/postgres')
+    engine = create_engine(DB_URL, echo=True)
 except ModuleNotFoundError:
     engine = create_engine('sqlite:///test.db')
     LOCAL_DB = True
@@ -43,7 +44,7 @@ if not LOCAL_DB:
         id = Column(Integer, primary_key=True, autoincrement=True)
         bundleId = Column(String)
         content = Column(String)
-        embedding = Column(Vector(384), default=None)
+        embedding = Column(Vector(int(config("MODEL_DIM", 384))), default=None)
 
 
 
@@ -62,22 +63,26 @@ def load_pg_extensions():
     if LOCAL_DB:
         return
     with engine.connect() as conn:
-        conn.execute(text('CREATE EXTENSION IF NOT EXISTS vector;'))
-        conn.execute(text('CREATE EXTENSION IF NOT EXISTS http;'))
-        # conn.commit()
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+        conn.commit()
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS http;"))
+        conn.commit()
     return
 
-def generate_data_in_auctions(data_file_path):
-    # Read the CSV file and insert records into the database
-    with open(data_file_path, 'r') as file:
+def load_data():
+    with open('auctions_data.csv', 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            # Create a record of "Auction" object
             auction = Auction(**row)
-            # Add the instance to the session
             session.add(auction)
 
-    # Commit and close SessionLocal
+    session.commit()
+
+    with open('app_data.csv', 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            auction = AppVector(**row)
+            session.add(auction)
     session.commit()
     session.close()
 
@@ -96,8 +101,7 @@ if __name__ == "__main__":
     load_pg_extensions()
     # create database tables
     Base.metadata.create_all(bind=engine)
-    # load auctions into the database
-    data_file_path = 'auctions_data.csv'
-    logger.info(f"Going to load data from {data_file_path}")
-    generate_data_in_auctions(data_file_path)
+    # load data
+    logger.info(f"Going to load data to DB")
+    load_data()
     logger.info("Done")
