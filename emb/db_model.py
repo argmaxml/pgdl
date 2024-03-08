@@ -14,13 +14,8 @@ __dir__ = Path(__file__).parent.parent.absolute()
 engine = None
 
 # SQLAlchemy configuration
-LOCAL_DB = False
-try:
-    DB_URL = config("DB_URL", 'postgresql://postgres:argmax@pg:5432/postgres')
-    engine = create_engine(DB_URL, echo=True)
-except ModuleNotFoundError:
-    engine = create_engine('sqlite:///test.db')
-    LOCAL_DB = True
+DB_URL = config("DB_URL", 'postgresql://postgres:argmax@pg:5432/postgres')
+engine = create_engine(DB_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = SessionLocal()
 Base = declarative_base()
@@ -38,13 +33,13 @@ class Auction(Base):
     bidFloorPrice = Column(Double)
     sentPrice = Column(Double)
 
-if not LOCAL_DB:
-    class AppVector(Base):
-        __tablename__ = 'app_vectors'
-        id = Column(Integer, primary_key=True, autoincrement=True)
-        bundleId = Column(String)
-        content = Column(String)
-        embedding = Column(Vector(int(config("MODEL_DIM", 384))), default=None)
+
+class AppVector(Base):
+    __tablename__ = 'app_vectors'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bundleId = Column(String)
+    content = Column(String)
+    embedding = Column(Vector(int(config("MODEL_DIM", 384))), default=None)
 
 
 
@@ -60,8 +55,6 @@ def get_db():
 
 
 def load_pg_extensions():
-    if LOCAL_DB:
-        return
     with engine.connect() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
         conn.commit()
@@ -81,8 +74,8 @@ def load_data():
     with open('app_data.csv', 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            auction = AppVector(**row)
-            session.add(auction)
+            vec = AppVector(**row)
+            session.add(vec)
     session.commit()
     session.close()
 
