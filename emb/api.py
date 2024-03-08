@@ -70,10 +70,13 @@ def embed_periodically():
     if not app_vectors:
         logger.info("No app vectors to embed.")
         return
+    # batch the content
+    contents = [app_vector.content for app_vector in app_vectors]
+    # embed the content
+    embeddings = text_model.encode(contents).tolist()
     # embed the content of the app vectors
-    for app_vector in app_vectors:
-        # TODO: run as batch
-        app_vector.embedding = text_model.encode([app_vector.content]).tolist()[0]
+    for i, app_vector in enumerate(app_vectors):
+        app_vector.embedding = embeddings[i]
     db.commit()
     db.flush()
     db.close()

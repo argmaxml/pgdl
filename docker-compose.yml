@@ -19,6 +19,7 @@ services:
     environment:
       MODEL_NAME: mixedbread-ai/mxbai-embed-large-v1
       MODEL_DIM: 1024
+      BATCH_SIZE: 16
       DB_URL: postgresql://postgres:argmax@pg:5432/postgres
       EMBED_FREQUENCY: 1
     ports:
