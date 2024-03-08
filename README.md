@@ -1,5 +1,6 @@
 # PGDL task
 ### Submission deadline: March 30th, 2024
+Please fill in [this form](https://forms.gle/MaMtcL7yuKsbtgdk7) after completing the task.
 ![Argmax](https://raw.githubusercontent.com/argmaxml/image-search/master/assets/argmax.png)
 
 ## Who is this repo for ?
@@ -31,3 +32,14 @@ Our offices located in Ramat-Gan, Jabotinsky st. 155 and we work Thursdays from 
   3. Browse to [JupyterLab](http://localhost:8888)
   4. Follow the instructions on the `sql.ipynb` notebook
 
+# When you're done
+
+## Submission:
+1. Please clone this repo to a private repo on your github account.
+1. Implement the missing parts.
+1. Please fill in this [form](https://forms.gle/MaMtcL7yuKsbtgdk7).
+1. An interview with Uri would be scheduled for you.
+
+## Prepare for the Interview
+1. Be prepared to answer questions on your submission
+1. This repo contains a lot of code, in the follow up interview you will be asked to extend a part of it
